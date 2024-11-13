@@ -19,20 +19,21 @@
             text-align: center;
             padding: 20px;
         }
-        .btn {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 16px;
-            cursor: pointer;
+        .buttons {
+            margin-top: 20px;
         }
-        .btn:hover {
-            background-color: #555;
+        .buttons a {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .buttons a:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -41,16 +42,16 @@
     <h1>Registro de Proveedores</h1>
     <div class="content">
         <p>Esta es la página donde se gestionan los proveedores. Aquí podrás añadir, editar o eliminar proveedores según sea necesario.</p>
-
-        <!-- Opciones de gestión de proveedores -->
-        <a href="agregar_proveedor.html" class="btn">Agregar Nuevo Proveedor</a>
-        <a href="editar_proveedor.html" class="btn">Editar Proveedor</a>
-        <a href="eliminar_proveedor.html" class="btn">Eliminar Proveedor</a>
-        <a href="ver_detalles_proveedor.html" class="btn">Ver Detalles del Proveedor</a>
-
+        <div class="buttons">
+            <a href="#">Agregar nuevo proveedor</a>
+            <a href="#">Editar proveedor</a>
+            <a href="#">Eliminar proveedor</a>
+            <a href="#">Ver detalles del proveedor</a>
+        </div>
         <p><a href="index.html">Volver a la página principal</a></p>
     </div>
 
 </body>
 </html>
+
 
