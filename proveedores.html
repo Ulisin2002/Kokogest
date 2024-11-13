@@ -7,20 +7,24 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #800080;
+            background-color: #800080; /* Color morado */
             background-image: url('infoProveedor.jpg'); /* Ruta de la imagen */
-            background-size: 70% 70%; /* Hace que la imagen cubra toda la pantalla */
+            background-size: cover; /* Hace que la imagen cubra toda la pantalla */
             background-position: center; /* Centra la imagen */
+            background-attachment: fixed; /* Fija la imagen en el fondo */
             margin: 0;
             padding: 20px;
         }
         h1 {
-            color: #333;
+            color: #fff; /* Texto blanco para contraste */
             text-align: center;
         }
         .content {
             text-align: center;
             padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para que el texto sea legible */
+            border-radius: 10px;
+            color: white; /* Color del texto en el contenido */
         }
         .buttons {
             margin-top: 20px;
@@ -51,10 +55,11 @@
             <a href="#">Eliminar proveedor</a>
             <a href="#">Ver detalles del proveedor</a>
         </div>
-        <p><a href="index.html">Volver a la página principal</a></p>
+        <p><a href="index.html" style="color: white; text-decoration: none;">Volver a la página principal</a></p>
     </div>
 
 </body>
 </html>
+
 
 
