@@ -141,6 +141,11 @@ $conn->close();
             color: #888;
         }
 
+        /* Cambiar color de los títulos dentro de los formularios */
+        .modal-content h2 {
+            color: #333; /* Color oscuro para los títulos */
+        }
+
         /* Ajuste del tamaño de los modales */
         #addModal, #editModal, #deleteModal, #detailsModal {
             width: 50%; /* Reducido un poco */
