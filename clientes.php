@@ -33,10 +33,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_cliente'])) {
     }
 }
 
-// Obtener los datos de los clientes para verlos
-if (isset($_GET['ver_datos'])) {
-    $sql = "SELECT * FROM cliente";
+// Procesar el formulario para editar los datos de un cliente
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_cliente'])) {
+    $run = $_POST['run'];
+    $nombre = $_POST['nombre'];
+    $apellido = $_POST['apellido'];
+    $celular = $_POST['celular'];
+    $correo = $_POST['correo'];
+    $fiado = $_POST['fiado'];
+
+    // Actualizar los datos del cliente
+    $sql = "UPDATE cliente SET nombre='$nombre', apellido='$apellido', celular='$celular', correo='$correo', fiado='$fiado' WHERE run='$run'";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "<p style='color:green;'>Cliente actualizado exitosamente.</p>";
+    } else {
+        echo "<p style='color:red;'>Error: " . $sql . "<br>" . $conn->error . "</p>";
+    }
+}
+
+// Obtener los datos del cliente seleccionado para editar
+if (isset($_GET['editar_cliente'])) {
+    $run = $_GET['editar_cliente'];
+    $sql = "SELECT * FROM cliente WHERE run='$run'";
     $result = $conn->query($sql);
+    $cliente = $result->fetch_assoc();
 }
 
 $conn->close();
@@ -100,11 +121,11 @@ $conn->close();
 
     <h1>Registro de Clientes</h1>
     <div class="content">
-        <p>Esta página está destinada a gestionar la información de los clientes. Aquí podrás añadir y ver los datos de los clientes.</p>
+        <p>Esta página está destinada a gestionar la información de los clientes. Aquí podrás añadir y editar los datos de los clientes.</p>
         
         <!-- Opciones de acción -->
         <a href="#" class="btn" onclick="document.getElementById('addClientForm').style.display='block'">Agregar cliente</a>
-        <a href="?ver_datos=true" class="btn">Ver datos</a>
+        <a href="#" class="btn" onclick="document.getElementById('editClientForm').style.display='block'">Editar cliente</a>
 
         <!-- Formulario para agregar un cliente -->
         <div id="addClientForm" style="display:none; margin-top: 20px; text-align: left;">
@@ -124,18 +145,24 @@ $conn->close();
             </form>
         </div>
 
-        <?php
-        // Mostrar datos de los clientes si se selecciona "Ver datos"
-        if (isset($result) && $result->num_rows > 0) {
-            echo "<h2>Clientes Registrados</h2>";
-            echo "<table>";
-            echo "<tr><th>RUN</th><th>Nombre</th><th>Apellido</th><th>Celular</th><th>Correo</th><th>Fiado</th></tr>";
-            while ($row = $result->fetch_assoc()) {
-                echo "<tr><td>" . $row['run'] . "</td><td>" . $row['nombre'] . "</td><td>" . $row['apellido'] . "</td><td>" . $row['celular'] . "</td><td>" . $row['correo'] . "</td><td>" . ($row['fiado'] ? 'Sí' : 'No') . "</td></tr>";
-            }
-            echo "</table>";
-        }
-        ?>
+        <!-- Formulario para editar un cliente -->
+        <div id="editClientForm" style="display:none; margin-top: 20px; text-align: left;">
+            <h2>Editar Cliente</h2>
+            <!-- Formulario para editar cliente -->
+            <form method="POST" action="">
+                <input type="text" name="run" placeholder="RUN del cliente" value="<?php echo isset($cliente) ? $cliente['run'] : ''; ?>" required readonly>
+                <input type="text" name="nombre" placeholder="Nombre del cliente" value="<?php echo isset($cliente) ? $cliente['nombre'] : ''; ?>" required>
+                <input type="text" name="apellido" placeholder="Apellido del cliente" value="<?php echo isset($cliente) ? $cliente['apellido'] : ''; ?>" required>
+                <input type="text" name="celular" placeholder="Número de celular" value="<?php echo isset($cliente) ? $cliente['celular'] : ''; ?>" required>
+                <input type="email" name="correo" placeholder="Correo electrónico" value="<?php echo isset($cliente) ? $cliente['correo'] : ''; ?>" required>
+                <label for="fiado">¿Fiado?</label>
+                <select name="fiado" required>
+                    <option value="1" <?php echo (isset($cliente) && $cliente['fiado'] == 1) ? 'selected' : ''; ?>>Sí</option>
+                    <option value="0" <?php echo (isset($cliente) && $cliente['fiado'] == 0) ? 'selected' : ''; ?>>No</option>
+                </select>
+                <input type="submit" name="edit_cliente" value="Editar Cliente">
+            </form>
+        </div>
 
         <p><a href="index.php">Volver a la página principal</a></p>
     </div>
