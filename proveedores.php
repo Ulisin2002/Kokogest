@@ -34,6 +34,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_proveedor'])) {
     }
 }
 
+// Obtener los datos del proveedor seleccionado para editar
+$proveedor = null;
+$proveedor_no_existe = false;
+if (isset($_POST['buscar_proveedor'])) {
+    $nombre = $_POST['nombre'];
+    $sql = "SELECT * FROM proovedor WHERE nombre='$nombre'";
+    $result = $conn->query($sql);
+    
+    if ($result->num_rows > 0) {
+        // Si el proveedor existe, mostramos sus datos para editar
+        $proveedor = $result->fetch_assoc();
+    } else {
+        // Si no existe, mostramos un mensaje de error
+        $proveedor_no_existe = true;
+    }
+}
+
+// Procesar el formulario para editar los datos de un proveedor
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_proveedor'])) {
+    $nombre = $_POST['edit_nombre'];
+    $telefono = $_POST['edit_telefono'];
+    $correo = $_POST['edit_correo'];
+    $direccion = $_POST['edit_direccion'];
+    $descripcion = $_POST['edit_descripcion'];
+
+    // Actualizar los datos del proveedor
+    $sql = "UPDATE proovedor SET nombre='$nombre', telefono='$telefono', correo='$correo', direccion='$direccion', descripcion='$descripcion' WHERE nombre='$nombre'";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "<p style='color:green;'>Proveedor actualizado exitosamente.</p>";
+    } else {
+        echo "<p style='color:red;'>Error: " . $sql . "<br>" . $conn->error . "</p>";
+    }
+}
+
 $conn->close();
 ?>
 
@@ -193,34 +228,22 @@ $conn->close();
                 <span class="close" onclick="closeModal('edit')">&times;</span>
                 <h2>Editar Proveedor</h2>
                 <form method="POST" action="">
-                    <input type="text" name="edit_nombre" placeholder="Nuevo nombre del proveedor" required>
-                    <input type="number" name="edit_telefono" placeholder="Nuevo teléfono" required>
-                    <input type="email" name="edit_correo" placeholder="Nuevo correo" required>
-                    <input type="text" name="edit_direccion" placeholder="Nueva dirección" required>
-                    <textarea name="edit_descripcion" placeholder="Nueva descripción"></textarea>
-                    <input type="submit" name="edit_proveedor" value="Guardar cambios">
+                    <!-- Solo se pide el nombre para buscar al proveedor -->
+                    <input type="text" name="nombre" placeholder="Ingrese el nombre del proveedor" required>
+                    <input type="submit" name="buscar_proveedor" value="Buscar Proveedor">
                 </form>
-            </div>
-        </div>
-
-        <!-- Modal para eliminar proveedor -->
-        <div id="deleteModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('delete')">&times;</span>
-                <h2>Eliminar Proveedor</h2>
-                <form method="POST" action="">
-                    <input type="text" name="delete_id" placeholder="ID del proveedor a eliminar" required>
-                    <input type="submit" name="delete_proveedor" value="Eliminar Proveedor">
-                </form>
-            </div>
-        </div>
-
-        <!-- Modal para ver detalles del proveedor -->
-        <div id="detailsModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal('details')">&times;</span>
-                <h2>Detalles del Proveedor</h2>
-                <p>Aquí se mostrarán los detalles del proveedor seleccionado. Esta sección mostrará toda la información que tengas sobre el proveedor, como su nombre, teléfono, correo, dirección y descripción.</p>
+                <?php if (isset($proveedor) && !$proveedor_no_existe): ?>
+                    <form method="POST" action="">
+                        <input type="text" name="edit_nombre" value="<?php echo $proveedor['nombre']; ?>" required>
+                        <input type="number" name="edit_telefono" value="<?php echo $proveedor['telefono']; ?>" required>
+                        <input type="email" name="edit_correo" value="<?php echo $proveedor['correo']; ?>" required>
+                        <input type="text" name="edit_direccion" value="<?php echo $proveedor['direccion']; ?>" required>
+                        <textarea name="edit_descripcion"><?php echo $proveedor['descripcion']; ?></textarea>
+                        <input type="submit" name="edit_proveedor" value="Guardar cambios">
+                    </form>
+                <?php elseif($proveedor_no_existe): ?>
+                    <p style="color:red;">Proveedor no encontrado. Intente nuevamente.</p>
+                <?php endif; ?>
             </div>
         </div>
 
