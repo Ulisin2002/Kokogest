@@ -60,6 +60,10 @@ if (isset($_GET['editar_cliente'])) {
     $cliente = $result->fetch_assoc();
 }
 
+// Obtener la lista de todos los clientes registrados
+$sql = "SELECT * FROM cliente";
+$clientes = $conn->query($sql);
+
 $conn->close();
 ?>
 
@@ -121,11 +125,12 @@ $conn->close();
 
     <h1>Registro de Clientes</h1>
     <div class="content">
-        <p>Esta página está destinada a gestionar la información de los clientes. Aquí podrás añadir y editar los datos de los clientes.</p>
+        <p>Esta página está destinada a gestionar la información de los clientes. Aquí podrás añadir, editar y ver los datos de los clientes.</p>
         
         <!-- Opciones de acción -->
         <a href="#" class="btn" onclick="document.getElementById('addClientForm').style.display='block'">Agregar cliente</a>
         <a href="#" class="btn" onclick="document.getElementById('editClientForm').style.display='block'">Editar cliente</a>
+        <a href="#" class="btn" onclick="document.getElementById('viewClientForm').style.display='block'">Ver datos</a>
 
         <!-- Formulario para agregar un cliente -->
         <div id="addClientForm" style="display:none; margin-top: 20px; text-align: left;">
@@ -162,6 +167,41 @@ $conn->close();
                 </select>
                 <input type="submit" name="edit_cliente" value="Editar Cliente">
             </form>
+        </div>
+
+        <!-- Ver los datos de los clientes -->
+        <div id="viewClientForm" style="display:none; margin-top: 20px; text-align: left;">
+            <h2>Clientes Registrados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>RUN</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Celular</th>
+                        <th>Correo</th>
+                        <th>Fiado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($clientes->num_rows > 0) {
+                        while ($row = $clientes->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $row['run'] . "</td>";
+                            echo "<td>" . $row['nombre'] . "</td>";
+                            echo "<td>" . $row['apellido'] . "</td>";
+                            echo "<td>" . $row['celular'] . "</td>";
+                            echo "<td>" . $row['correo'] . "</td>";
+                            echo "<td>" . ($row['fiado'] == 1 ? 'Sí' : 'No') . "</td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='6'>No hay clientes registrados.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
         </div>
 
         <p><a href="index.php">Volver a la página principal</a></p>
