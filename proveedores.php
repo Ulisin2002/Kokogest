@@ -34,21 +34,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_proveedor'])) {
     }
 }
 
-// Obtener todos los proveedores
+// Obtener todos los proveedores para mostrarlos
 $sql_proveedores = "SELECT * FROM proovedor";
 $proveedores = $conn->query($sql_proveedores);
 
 // Procesar el formulario para editar los datos de un proveedor
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_proveedor'])) {
-    $nombre = $_POST['edit_nombre'];
+    $nombre = $_POST['edit_nombre']; // Nombre del proveedor que se quiere editar
     $telefono = $_POST['edit_telefono'];
     $correo = $_POST['edit_correo'];
     $direccion = $_POST['edit_direccion'];
     $descripcion = $_POST['edit_descripcion'];
 
-    // Actualizar los datos del proveedor
-    $sql = "UPDATE proovedor SET nombre='$nombre', telefono='$telefono', correo='$correo', direccion='$direccion', descripcion='$descripcion' WHERE nombre='$nombre'";
-    
+    // Actualizar los datos del proveedor solo si existe
+    $sql = "UPDATE proovedor SET telefono='$telefono', correo='$correo', direccion='$direccion', descripcion='$descripcion' WHERE nombre='$nombre'";
+
     if ($conn->query($sql) === TRUE) {
         echo "<p style='color:green;'>Proveedor actualizado exitosamente.</p>";
     } else {
@@ -234,7 +234,7 @@ $conn->close();
                     <input type="number" id="telefono" name="telefono" placeholder="Ingrese el teléfono" required>
                     <input type="email" id="correo" name="correo" placeholder="Ingrese el correo electrónico" required>
                     <input type="text" id="direccion" name="direccion" placeholder="Ingrese la dirección" required>
-                    <textarea id="descripcion" name="descripcion" placeholder="Descripción del proveedor"></textarea>
+                    <textarea name="descripcion" placeholder="Descripción del proveedor"></textarea>
                     <input type="submit" name="add_proveedor" value="Agregar Proveedor">
                 </form>
             </div>
@@ -247,12 +247,13 @@ $conn->close();
                 <h2>Editar Proveedor</h2>
                 <form method="POST" action="">
                     <input type="text" name="edit_nombre" placeholder="Ingrese el nombre del proveedor a editar" required>
-                    <input type="number" name="edit_telefono" placeholder="Ingrese el teléfono" required>
-                    <input type="email" name="edit_correo" placeholder="Ingrese el correo electrónico" required>
-                    <input type="text" name="edit_direccion" placeholder="Ingrese la dirección" required>
-                    <textarea name="edit_descripcion" placeholder="Descripción del proveedor"></textarea>
+                    <input type="number" name="edit_telefono" placeholder="Ingrese el teléfono" value="<?php echo $proveedor ? $proveedor['telefono'] : ''; ?>" required>
+                    <input type="email" name="edit_correo" placeholder="Ingrese el correo electrónico" value="<?php echo $proveedor ? $proveedor['correo'] : ''; ?>" required>
+                    <input type="text" name="edit_direccion" placeholder="Ingrese la dirección" value="<?php echo $proveedor ? $proveedor['direccion'] : ''; ?>" required>
+                    <textarea name="edit_descripcion" placeholder="Descripción del proveedor"><?php echo $proveedor ? $proveedor['descripcion'] : ''; ?></textarea>
                     <input type="submit" name="edit_proveedor" value="Actualizar Proveedor">
                 </form>
+                <?php if ($proveedor_no_existe) echo "<p style='color:red;'>Proveedor no encontrado.</p>"; ?>
             </div>
         </div>
 
