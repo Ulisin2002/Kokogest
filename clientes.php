@@ -21,10 +21,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_cliente'])) {
     $celular = $_POST['celular'];
     $correo = $_POST['correo'];
     $fiado = $_POST['fiado'];
+    $deuda = $_POST['deuda']; // Agregar el valor de la deuda
 
     // Insertar en la base de datos
-    $sql = "INSERT INTO cliente (run, nombre, apellido, celular, correo, fiado) 
-            VALUES ('$run', '$nombre', '$apellido', '$celular', '$correo', '$fiado')";
+    $sql = "INSERT INTO cliente (run, nombre, apellido, celular, correo, fiado, deuda) 
+            VALUES ('$run', '$nombre', '$apellido', '$celular', '$correo', '$fiado', '$deuda')";
     
     if ($conn->query($sql) === TRUE) {
         echo "<p style='color:green;'>Cliente agregado exitosamente.</p>";
@@ -41,9 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_cliente'])) {
     $celular = $_POST['celular'];
     $correo = $_POST['correo'];
     $fiado = $_POST['fiado'];
+    $deuda = $_POST['deuda']; // Agregar el valor de la deuda
 
     // Actualizar los datos del cliente
-    $sql = "UPDATE cliente SET nombre='$nombre', apellido='$apellido', celular='$celular', correo='$correo', fiado='$fiado' WHERE run='$run'";
+    $sql = "UPDATE cliente SET nombre='$nombre', apellido='$apellido', celular='$celular', correo='$correo', fiado='$fiado', deuda='$deuda' WHERE run='$run'";
     
     if ($conn->query($sql) === TRUE) {
         echo "<p style='color:green;'>Cliente actualizado exitosamente.</p>";
@@ -183,6 +185,7 @@ $conn->close();
                     <option value="1">Sí</option>
                     <option value="0">No</option>
                 </select>
+                <input type="text" name="deuda" placeholder="Deuda del cliente" required>
                 <input type="submit" name="add_cliente" value="Agregar Cliente">
             </form>
         </div>
@@ -195,20 +198,22 @@ $conn->close();
                 <input type="submit" name="buscar_cliente" value="Buscar Cliente">
             </form>
             <?php if ($cliente_no_existe): ?>
-                <p class="error">No se encontró ningún cliente con ese RUN.</p>
-            <?php elseif ($cliente): ?>
+                <p class="error">No se encontró el cliente con ese RUN.</p>
+            <?php endif; ?>
+            <?php if ($cliente): ?>
                 <form method="POST" action="">
-                    <input type="text" name="run" value="<?php echo $cliente['run']; ?>" readonly>
-                    <input type="text" name="nombre" value="<?php echo $cliente['nombre']; ?>" required>
-                    <input type="text" name="apellido" value="<?php echo $cliente['apellido']; ?>" required>
-                    <input type="text" name="celular" value="<?php echo $cliente['celular']; ?>" required>
-                    <input type="email" name="correo" value="<?php echo $cliente['correo']; ?>" required>
+                    <input type="hidden" name="run" value="<?= $cliente['run'] ?>">
+                    <input type="text" name="nombre" value="<?= $cliente['nombre'] ?>" required>
+                    <input type="text" name="apellido" value="<?= $cliente['apellido'] ?>" required>
+                    <input type="text" name="celular" value="<?= $cliente['celular'] ?>" required>
+                    <input type="email" name="correo" value="<?= $cliente['correo'] ?>" required>
                     <label for="fiado">¿Fiado?</label>
                     <select name="fiado" required>
-                        <option value="1" <?php echo $cliente['fiado'] == 1 ? 'selected' : ''; ?>>Sí</option>
-                        <option value="0" <?php echo $cliente['fiado'] == 0 ? 'selected' : ''; ?>>No</option>
+                        <option value="1" <?= $cliente['fiado'] == 1 ? 'selected' : '' ?>>Sí</option>
+                        <option value="0" <?= $cliente['fiado'] == 0 ? 'selected' : '' ?>>No</option>
                     </select>
-                    <input type="submit" name="edit_cliente" value="Editar Cliente">
+                    <input type="text" name="deuda" value="<?= $cliente['deuda'] ?>" required>
+                    <input type="submit" name="edit_cliente" value="Actualizar Cliente">
                 </form>
             <?php endif; ?>
         </div>
@@ -222,34 +227,39 @@ $conn->close();
             </form>
         </div>
 
-        <!-- Ver todos los clientes registrados -->
+        <!-- Mostrar clientes -->
         <div id="viewClientForm" style="display:none; margin-top: 20px;">
-            <h2>Lista de Clientes</h2>
-            <?php if ($clientes->num_rows > 0): ?>
-                <table border="1" cellpadding="10">
-                    <tr>
-                        <th>RUN</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Celular</th>
-                        <th>Correo</th>
-                        <th>Fiado</th>
-                    </tr>
-                    <?php while($row = $clientes->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $row['run']; ?></td>
-                            <td><?php echo $row['nombre']; ?></td>
-                            <td><?php echo $row['apellido']; ?></td>
-                            <td><?php echo $row['celular']; ?></td>
-                            <td><?php echo $row['correo']; ?></td>
-                            <td><?php echo $row['fiado'] == 1 ? 'Sí' : 'No'; ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                </table>
-            <?php else: ?>
-                <p>No hay clientes registrados.</p>
-            <?php endif; ?>
+            <h2>Clientes Registrados</h2>
+            <table border="1" cellspacing="0" cellpadding="5" style="width:100%; margin-top: 20px; text-align: center; color:white; border-collapse: collapse;">
+                <tr>
+                    <th>RUN</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Celular</th>
+                    <th>Correo</th>
+                    <th>Fiado</th>
+                    <th>Deuda</th>
+                </tr>
+                <?php
+                    if ($clientes->num_rows > 0) {
+                        while($row = $clientes->fetch_assoc()) {
+                            echo "<tr>
+                                    <td>" . $row["run"]. "</td>
+                                    <td>" . $row["nombre"]. "</td>
+                                    <td>" . $row["apellido"]. "</td>
+                                    <td>" . $row["celular"]. "</td>
+                                    <td>" . $row["correo"]. "</td>
+                                    <td>" . ($row["fiado"] == 1 ? "Sí" : "No") . "</td>
+                                    <td>" . $row["deuda"] . "</td>
+                                  </tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='7'>No hay clientes registrados.</td></tr>";
+                    }
+                ?>
+            </table>
         </div>
     </div>
 </body>
 </html>
+
