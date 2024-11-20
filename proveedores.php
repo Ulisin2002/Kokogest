@@ -34,22 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_proveedor'])) {
     }
 }
 
-// Obtener los datos del proveedor seleccionado para editar
-$proveedor = null;
-$proveedor_no_existe = false;
-if (isset($_POST['buscar_proveedor'])) {
-    $nombre = $_POST['nombre'];
-    $sql = "SELECT * FROM proovedor WHERE nombre='$nombre'";
-    $result = $conn->query($sql);
-    
-    if ($result->num_rows > 0) {
-        // Si el proveedor existe, mostramos sus datos para editar
-        $proveedor = $result->fetch_assoc();
-    } else {
-        // Si no existe, mostramos un mensaje de error
-        $proveedor_no_existe = true;
-    }
-}
+// Obtener todos los proveedores
+$sql_proveedores = "SELECT * FROM proovedor";
+$proveedores = $conn->query($sql_proveedores);
 
 // Procesar el formulario para editar los datos de un proveedor
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_proveedor'])) {
@@ -66,6 +53,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_proveedor'])) {
         echo "<p style='color:green;'>Proveedor actualizado exitosamente.</p>";
     } else {
         echo "<p style='color:red;'>Error: " . $sql . "<br>" . $conn->error . "</p>";
+    }
+}
+
+// Procesar el formulario para eliminar un proveedor
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_proveedor'])) {
+    $nombre = $_POST['delete_nombre'];
+
+    // Eliminar el proveedor
+    $sql = "DELETE FROM proovedor WHERE nombre='$nombre'";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "<p style='color:green;'>Proveedor eliminado exitosamente.</p>";
+    } else {
+        echo "<p style='color:red;'>Error: " . $conn->error . "</p>";
+    }
+}
+
+// Obtener los datos del proveedor seleccionado para editar
+$proveedor = null;
+$proveedor_no_existe = false;
+if (isset($_POST['buscar_proveedor'])) {
+    $nombre = $_POST['nombre'];
+    $sql = "SELECT * FROM proovedor WHERE nombre='$nombre'";
+    $result = $conn->query($sql);
+    
+    if ($result->num_rows > 0) {
+        // Si el proveedor existe, mostramos sus datos para editar
+        $proveedor = $result->fetch_assoc();
+    } else {
+        // Si no existe, mostramos un mensaje de error
+        $proveedor_no_existe = true;
     }
 }
 
@@ -228,45 +246,70 @@ $conn->close();
                 <span class="close" onclick="closeModal('edit')">&times;</span>
                 <h2>Editar Proveedor</h2>
                 <form method="POST" action="">
-                    <!-- Solo se pide el nombre para buscar al proveedor -->
-                    <input type="text" name="nombre" placeholder="Ingrese el nombre del proveedor" required>
-                    <input type="submit" name="buscar_proveedor" value="Buscar Proveedor">
+                    <input type="text" name="edit_nombre" placeholder="Ingrese el nombre del proveedor a editar" required>
+                    <input type="number" name="edit_telefono" placeholder="Ingrese el teléfono" required>
+                    <input type="email" name="edit_correo" placeholder="Ingrese el correo electrónico" required>
+                    <input type="text" name="edit_direccion" placeholder="Ingrese la dirección" required>
+                    <textarea name="edit_descripcion" placeholder="Descripción del proveedor"></textarea>
+                    <input type="submit" name="edit_proveedor" value="Actualizar Proveedor">
                 </form>
-                <?php if (isset($proveedor) && !$proveedor_no_existe): ?>
-                    <form method="POST" action="">
-                        <input type="text" name="edit_nombre" value="<?php echo $proveedor['nombre']; ?>" required>
-                        <input type="number" name="edit_telefono" value="<?php echo $proveedor['telefono']; ?>" required>
-                        <input type="email" name="edit_correo" value="<?php echo $proveedor['correo']; ?>" required>
-                        <input type="text" name="edit_direccion" value="<?php echo $proveedor['direccion']; ?>" required>
-                        <textarea name="edit_descripcion"><?php echo $proveedor['descripcion']; ?></textarea>
-                        <input type="submit" name="edit_proveedor" value="Guardar cambios">
-                    </form>
-                <?php elseif($proveedor_no_existe): ?>
-                    <p style="color:red;">Proveedor no encontrado. Intente nuevamente.</p>
+            </div>
+        </div>
+
+        <!-- Modal para eliminar proveedor -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('delete')">&times;</span>
+                <h2>Eliminar Proveedor</h2>
+                <form method="POST" action="">
+                    <input type="text" name="delete_nombre" placeholder="Ingrese el nombre del proveedor a eliminar" required>
+                    <input type="submit" name="delete_proveedor" value="Eliminar Proveedor">
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para ver detalles -->
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('details')">&times;</span>
+                <h2>Detalles de Proveedores</h2>
+                <?php if ($proveedores->num_rows > 0): ?>
+                    <table border="1" style="width: 100%; text-align: left;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Dirección</th>
+                            <th>Descripción</th>
+                        </tr>
+                        <?php while ($row = $proveedores->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo $row['nombre']; ?></td>
+                                <td><?php echo $row['telefono']; ?></td>
+                                <td><?php echo $row['correo']; ?></td>
+                                <td><?php echo $row['direccion']; ?></td>
+                                <td><?php echo $row['descripcion']; ?></td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </table>
+                <?php else: ?>
+                    <p style="color:red;">No hay proveedores registrados.</p>
                 <?php endif; ?>
             </div>
         </div>
 
-        <p><a href="index.php" style="color: white; text-decoration: none;">Volver a la página principal</a></p>
     </div>
 
     <script>
         function openModal(modalName) {
-            document.getElementById(modalName + 'Modal').style.display = "block";
+            var modal = document.getElementById(modalName + 'Modal');
+            modal.style.display = "block";
         }
-
         function closeModal(modalName) {
-            document.getElementById(modalName + 'Modal').style.display = "none";
-        }
-
-        // Cerrar el modal si se hace clic fuera de él
-        window.onclick = function(event) {
-            if (event.target.className === "modal") {
-                closeModal('add');
-                closeModal('edit');
-                closeModal('delete');
-                closeModal('details');
-            }
+            var modal = document.getElementById(modalName + 'Modal');
+            modal.style.display = "none";
         }
     </script>
 
