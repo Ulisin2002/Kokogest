@@ -1,102 +1,3 @@
-<?php
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "registroproovedores_kokositas"; // Nombre de la base de datos
-
-// Crear conexión
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Comprobar la conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
-
-// Procesar el formulario para agregar un nuevo cliente
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_cliente'])) {
-    $run = $_POST['run'];
-    $nombre = $_POST['nombre'];
-    $apellido = $_POST['apellido'];
-    $celular = $_POST['celular'];
-    $correo = $_POST['correo'];
-    $fiado = $_POST['fiado'];
-
-    // Insertar en la base de datos
-    $sql = "INSERT INTO cliente (run, nombre, apellido, celular, correo, fiado) 
-            VALUES ('$run', '$nombre', '$apellido', '$celular', '$correo', '$fiado')";
-    
-    if ($conn->query($sql) === TRUE) {
-        echo "<p style='color:green;'>Cliente agregado exitosamente.</p>";
-    } else {
-        echo "<p style='color:red;'>Error: " . $sql . "<br>" . $conn->error . "</p>";
-    }
-}
-
-// Procesar el formulario para editar los datos de un cliente
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_cliente'])) {
-    $run = $_POST['run'];
-    $nombre = $_POST['nombre'];
-    $apellido = $_POST['apellido'];
-    $celular = $_POST['celular'];
-    $correo = $_POST['correo'];
-    $fiado = $_POST['fiado'];
-
-    // Actualizar los datos del cliente
-    $sql = "UPDATE cliente SET nombre='$nombre', apellido='$apellido', celular='$celular', correo='$correo', fiado='$fiado' WHERE run='$run'";
-    
-    if ($conn->query($sql) === TRUE) {
-        echo "<p style='color:green;'>Cliente actualizado exitosamente.</p>";
-    } else {
-        echo "<p style='color:red;'>Error: " . $sql . "<br>" . $conn->error . "</p>";
-    }
-}
-
-// Procesar el formulario para eliminar un cliente
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_cliente'])) {
-    $run = $_POST['run'];
-
-    // Verificar si el cliente existe antes de eliminar
-    $sql_check = "SELECT * FROM cliente WHERE run='$run'";
-    $result_check = $conn->query($sql_check);
-
-    if ($result_check->num_rows > 0) {
-        // Eliminar el cliente
-        $sql_delete = "DELETE FROM cliente WHERE run='$run'";
-        if ($conn->query($sql_delete) === TRUE) {
-            echo "<p style='color:green;'>Cliente eliminado exitosamente.</p>";
-        } else {
-            echo "<p style='color:red;'>Error al eliminar el cliente: " . $conn->error . "</p>";
-        }
-    } else {
-        echo "<p style='color:red;'>No se encontró ningún cliente con ese RUN.</p>";
-    }
-}
-
-// Obtener los datos del cliente seleccionado para editar
-$cliente = null;
-$cliente_no_existe = false;
-if (isset($_POST['buscar_cliente'])) {
-    $run = $_POST['run'];
-    $sql = "SELECT * FROM cliente WHERE run='$run'";
-    $result = $conn->query($sql);
-    
-    if ($result->num_rows > 0) {
-        // Si el cliente existe, mostramos sus datos para editar
-        $cliente = $result->fetch_assoc();
-    } else {
-        // Si no existe, mostramos un mensaje de error
-        $cliente_no_existe = true;
-    }
-}
-
-// Obtener la lista de todos los clientes registrados
-$sql = "SELECT * FROM cliente";
-$clientes = $conn->query($sql);
-
-$conn->close();
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -106,9 +7,13 @@ $conn->close();
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-image: url('clientePagina.jpg'); /* Cambia esta ruta por la ubicación de tu imagen */
+            background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+            background-position: center; /* Centra la imagen en la pantalla */
+            background-attachment: fixed; /* Hace que la imagen se quede fija mientras se desplaza la página */
             margin: 0;
             padding: 20px;
+            color: white; /* Color blanco para que el texto sea visible sobre la imagen */
         }
         h1 {
             color: #333;
@@ -117,9 +22,11 @@ $conn->close();
         .content {
             text-align: center;
             padding: 20px;
+            background: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para que el texto se vea mejor */
+            border-radius: 8px;
         }
         .btn {
-            background-color: #4CAF50; /* color verde */
+            background-color: #4CAF50; /* Color verde */
             color: white;
             padding: 15px 32px;
             text-align: center;
@@ -131,7 +38,7 @@ $conn->close();
             transition: background-color 0.3s ease;
         }
         .btn:hover {
-            background-color: #45a049; /* cambio de color al pasar el ratón */
+            background-color: #45a049; /* Cambio de color al pasar el ratón */
         }
         input[type="text"], input[type="email"], select {
             width: 100%;
@@ -244,4 +151,3 @@ $conn->close();
     </div>
 </body>
 </html>
-
