@@ -119,6 +119,7 @@ $conn->close();
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            background-color: #f9f9f9; /* Fondo gris claro para los campos */
         }
         textarea {
             resize: vertical;
@@ -177,9 +178,7 @@ $conn->close();
             <div class="modal-content">
                 <span class="close" onclick="closeModal('edit')">&times;</span>
                 <h2>Editar Proveedor</h2>
-                <!-- Formulario para editar proveedor, similar al de agregar -->
                 <form method="POST" action="">
-                    <!-- Aquí puedes colocar campos específicos para editar -->
                     <input type="text" name="edit_nombre" placeholder="Nuevo nombre del proveedor">
                     <input type="number" name="edit_telefono" placeholder="Nuevo teléfono">
                     <input type="email" name="edit_correo" placeholder="Nuevo correo">
