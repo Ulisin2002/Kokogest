@@ -93,14 +93,16 @@ $conn->close();
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             padding-top: 50px;
+            overflow-y: auto;
         }
         .modal-content {
             background-color: #fff;
             padding: 20px;
-            margin: 10% auto;
+            margin: 5% auto;
             border-radius: 10px;
-            width: 50%;
+            width: 60%;
             max-width: 600px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
         }
         .close {
             color: #aaa;
@@ -116,7 +118,7 @@ $conn->close();
         }
         input[type="text"], input[type="number"], input[type="email"], textarea, input[type="submit"] {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -159,21 +161,11 @@ $conn->close();
                 <span class="close" onclick="closeModal('add')">&times;</span>
                 <h2>Agregar Nuevo Proveedor</h2>
                 <form method="POST" action="">
-                    <label for="nombre">Nombre del proveedor:</label>
                     <input type="text" id="nombre" name="nombre" placeholder="Ingrese el nombre del proveedor" required>
-
-                    <label for="telefono">Teléfono:</label>
                     <input type="number" id="telefono" name="telefono" placeholder="Ingrese el teléfono" required>
-
-                    <label for="correo">Correo electrónico:</label>
                     <input type="email" id="correo" name="correo" placeholder="Ingrese el correo electrónico" required>
-
-                    <label for="direccion">Dirección:</label>
                     <input type="text" id="direccion" name="direccion" placeholder="Ingrese la dirección" required>
-
-                    <label for="descripcion">Descripción:</label>
                     <textarea id="descripcion" name="descripcion" placeholder="Descripción del proveedor"></textarea>
-
                     <input type="submit" name="add_proveedor" value="Agregar Proveedor">
                 </form>
             </div>
