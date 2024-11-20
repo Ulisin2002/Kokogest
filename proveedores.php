@@ -100,7 +100,7 @@ $conn->close();
             padding: 20px;
             margin: 5% auto;
             border-radius: 10px;
-            width: 60%;
+            width: 50%;
             max-width: 600px;
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
         }
@@ -122,7 +122,7 @@ $conn->close();
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            background-color: #f9f9f9; /* Fondo gris claro para los campos */
+            background-color: #f9f9f9;
             font-size: 16px;
         }
         textarea {
@@ -138,7 +138,18 @@ $conn->close();
         }
         /* Estilo para los placeholders */
         input::placeholder, textarea::placeholder {
-            color: #888; /* Gris claro para el texto indicativo */
+            color: #888;
+        }
+
+        /* Ajuste del tamaño de los modales */
+        #addModal, #editModal, #deleteModal, #detailsModal {
+            width: 50%; /* Reducido un poco */
+        }
+
+        /* Ajustar la visibilidad en el modal de detalles */
+        #detailsModal .modal-content p {
+            color: black;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -204,7 +215,7 @@ $conn->close();
             <div class="modal-content">
                 <span class="close" onclick="closeModal('details')">&times;</span>
                 <h2>Detalles del Proveedor</h2>
-                <p>Aquí se mostrarán los detalles del proveedor seleccionado.</p>
+                <p>Aquí se mostrarán los detalles del proveedor seleccionado. Esta sección mostrará toda la información que tengas sobre el proveedor, como su nombre, teléfono, correo, dirección y descripción.</p>
             </div>
         </div>
 
