@@ -203,7 +203,7 @@ $conn->close();
                 </tbody>
             </table>
         </div>
-
+        
         <p><a href="index.php">Volver a la página principal</a></p>
     </div>
 
