@@ -106,7 +106,7 @@ $conn->close();
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('images/tu-imagen-de-fondo.jpg'); /* Reemplaza con el nombre de tu imagen */
+            background-image: url('clientePagina.jpg'); /* Reemplaza con el nombre de tu imagen */
             background-size: cover;
             background-position: center;
             margin: 0;
