@@ -1,15 +1,42 @@
 <?php
-// Aquí podrías agregar cualquier código PHP necesario, por ejemplo para conectar con la base de datos, manejar formularios, etc.
-// Ejemplo: Conexión a la base de datos
-// $servername = "localhost";
-// $username = "root";
-// $password = "";
-// $dbname = "mi_base_de_datos";
-// $conn = new mysqli($servername, $username, $password, $dbname);
-// if ($conn->connect_error) {
-//     die("Conexión fallida: " . $conn->connect_error);
-// }
-// Fin del código PHP
+// Conexión a la base de datos
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "registroproovedores_kokositas"; // Nombre de la base de datos
+
+// Crear conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Comprobar la conexión
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+
+// Procesar el formulario cuando se envíe
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Obtener los datos del formulario
+    $nombre = $_POST['nombre'];
+    $telefono = $_POST['telefono'];
+    $correo = $_POST['correo'];
+    $direccion = $_POST['direccion'];
+    $descripcion = $_POST['descripcion'];
+    
+    // Generar un ID único para el proveedor
+    $id = uniqid(); // Usamos un ID único basado en la función uniqid()
+
+    // Preparar la consulta SQL para insertar los datos
+    $sql = "INSERT INTO proovedor (id, nombre, telefono, correo, direccion, descripcion) 
+            VALUES ('$id', '$nombre', '$telefono', '$correo', '$direccion', '$descripcion')";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "<p style='color:green;'>Proveedor agregado exitosamente.</p>";
+    } else {
+        echo "<p style='color:red;'>Error: " . $sql . "<br>" . $conn->error . "</p>";
+    }
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -41,8 +68,31 @@
             border-radius: 10px;
             color: white; /* Color del texto en el contenido */
         }
-        .buttons {
-            margin-top: 20px;
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: auto;
+        }
+        input[type="text"], input[type="number"], input[type="email"], textarea, input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        textarea {
+            resize: vertical;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
         }
         .buttons a {
             display: inline-block;
@@ -64,12 +114,35 @@
     <h1>Registro de Proveedores</h1>
     <div class="content">
         <p>Esta es la página donde se gestionan los proveedores. Aquí podrás añadir, editar o eliminar proveedores según sea necesario.</p>
+
+        <!-- Formulario para agregar un proveedor -->
+        <div class="form-container">
+            <form method="POST" action="">
+                <label for="nombre">Nombre del proveedor:</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="telefono">Teléfono:</label>
+                <input type="number" id="telefono" name="telefono" required>
+
+                <label for="correo">Correo electrónico:</label>
+                <input type="email" id="correo" name="correo" required>
+
+                <label for="direccion">Dirección:</label>
+                <input type="text" id="direccion" name="direccion" required>
+
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion"></textarea>
+
+                <input type="submit" value="Agregar Proveedor">
+            </form>
+        </div>
+
         <div class="buttons">
-            <a href="#">Agregar nuevo proveedor</a>
             <a href="#">Editar proveedor</a>
             <a href="#">Eliminar proveedor</a>
             <a href="#">Ver detalles del proveedor</a>
         </div>
+
         <p><a href="index.php" style="color: white; text-decoration: none;">Volver a la página principal</a></p>
     </div>
 
