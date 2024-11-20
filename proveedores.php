@@ -15,17 +15,15 @@ if ($conn->connect_error) {
 
 // Procesar el formulario para agregar un nuevo proveedor
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_proveedor'])) {
-    // Obtener los datos del formulario
     $nombre = $_POST['nombre'];
     $telefono = $_POST['telefono'];
     $correo = $_POST['correo'];
     $direccion = $_POST['direccion'];
     $descripcion = $_POST['descripcion'];
 
-    // Generar un ID único para el proveedor
-    $id = uniqid(); // Usamos un ID único basado en la función uniqid()
+    $id = uniqid(); // Generar ID único
 
-    // Preparar la consulta SQL para insertar los datos
+    // Insertar en la base de datos
     $sql = "INSERT INTO proovedor (id, nombre, telefono, correo, direccion, descripcion) 
             VALUES ('$id', '$nombre', '$telefono', '$correo', '$direccion', '$descripcion')";
     
@@ -50,9 +48,9 @@ $conn->close();
             font-family: Arial, sans-serif;
             background-color: #800080; /* Color morado */
             background-image: url('infoProveedor.jpg'); /* Ruta de la imagen */
-            background-size: cover; /* Hace que la imagen cubra toda la pantalla */
-            background-position: center; /* Centra la imagen */
-            background-attachment: fixed; /* Fija la imagen en el fondo */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             margin: 0;
             padding: 20px;
         }
@@ -64,9 +62,9 @@ $conn->close();
         .content {
             text-align: center;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para que el texto sea legible */
+            background-color: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
-            color: white; /* Color del texto en el contenido */
+            color: white;
         }
         .buttons {
             margin-top: 20px;
@@ -84,16 +82,16 @@ $conn->close();
         .buttons a:hover {
             background-color: #45a049;
         }
-        /* Estilos para el modal */
+        /* Estilos para los modales */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
+            display: none;
+            position: fixed;
+            z-index: 1;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            background-color: rgba(0, 0, 0, 0.5); 
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             padding-top: 50px;
         }
         .modal-content {
@@ -174,14 +172,53 @@ $conn->close();
             </div>
         </div>
 
-        <!-- Agregar los demás modales según sea necesario -->
-        <!-- Modal de editar, eliminar y ver detalles -->
+        <!-- Modal para editar proveedor -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('edit')">&times;</span>
+                <h2>Editar Proveedor</h2>
+                <!-- Formulario para editar proveedor, similar al de agregar -->
+                <form method="POST" action="">
+                    <!-- Aquí puedes colocar campos específicos para editar -->
+                    <input type="text" name="edit_nombre" placeholder="Nuevo nombre del proveedor">
+                    <input type="number" name="edit_telefono" placeholder="Nuevo teléfono">
+                    <input type="email" name="edit_correo" placeholder="Nuevo correo">
+                    <input type="text" name="edit_direccion" placeholder="Nueva dirección">
+                    <textarea name="edit_descripcion" placeholder="Nueva descripción"></textarea>
+                    <input type="submit" name="edit_proveedor" value="Guardar cambios">
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para eliminar proveedor -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('delete')">&times;</span>
+                <h2>Eliminar Proveedor</h2>
+                <form method="POST" action="">
+                    <input type="text" name="delete_id" placeholder="ID del proveedor a eliminar" required>
+                    <input type="submit" name="delete_proveedor" value="Eliminar Proveedor">
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para ver detalles del proveedor -->
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('details')">&times;</span>
+                <h2>Detalles del Proveedor</h2>
+                <form method="POST" action="">
+                    <input type="text" name="details_id" placeholder="ID del proveedor" required>
+                    <input type="submit" name="view_proveedor" value="Ver detalles">
+                </form>
+            </div>
+        </div>
 
         <p><a href="index.php" style="color: white; text-decoration: none;">Volver a la página principal</a></p>
     </div>
 
     <script>
-        // Funciones para mostrar y ocultar el modal
+        // Funciones para mostrar y ocultar los modales
         function openModal(modalType) {
             document.getElementById(modalType + "Modal").style.display = "block";
         }
@@ -194,6 +231,9 @@ $conn->close();
         window.onclick = function(event) {
             if (event.target.className === "modal") {
                 closeModal('add');
+                closeModal('edit');
+                closeModal('delete');
+                closeModal('details');
             }
         }
     </script>
