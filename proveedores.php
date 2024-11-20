@@ -97,9 +97,10 @@ $conn->close();
         .modal-content {
             background-color: #fff;
             padding: 20px;
-            margin: 15% auto;
+            margin: 10% auto;
             border-radius: 10px;
             width: 50%;
+            max-width: 600px;
         }
         .close {
             color: #aaa;
@@ -120,6 +121,7 @@ $conn->close();
             border: 1px solid #ccc;
             border-radius: 5px;
             background-color: #f9f9f9; /* Fondo gris claro para los campos */
+            font-size: 16px;
         }
         textarea {
             resize: vertical;
@@ -131,6 +133,10 @@ $conn->close();
         }
         input[type="submit"]:hover {
             background-color: #45a049;
+        }
+        /* Estilo para los placeholders */
+        input::placeholder, textarea::placeholder {
+            color: #888; /* Gris claro para el texto indicativo */
         }
     </style>
 </head>
@@ -154,19 +160,19 @@ $conn->close();
                 <h2>Agregar Nuevo Proveedor</h2>
                 <form method="POST" action="">
                     <label for="nombre">Nombre del proveedor:</label>
-                    <input type="text" id="nombre" name="nombre" required>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ingrese el nombre del proveedor" required>
 
                     <label for="telefono">Teléfono:</label>
-                    <input type="number" id="telefono" name="telefono" required>
+                    <input type="number" id="telefono" name="telefono" placeholder="Ingrese el teléfono" required>
 
                     <label for="correo">Correo electrónico:</label>
-                    <input type="email" id="correo" name="correo" required>
+                    <input type="email" id="correo" name="correo" placeholder="Ingrese el correo electrónico" required>
 
                     <label for="direccion">Dirección:</label>
-                    <input type="text" id="direccion" name="direccion" required>
+                    <input type="text" id="direccion" name="direccion" placeholder="Ingrese la dirección" required>
 
                     <label for="descripcion">Descripción:</label>
-                    <textarea id="descripcion" name="descripcion"></textarea>
+                    <textarea id="descripcion" name="descripcion" placeholder="Descripción del proveedor"></textarea>
 
                     <input type="submit" name="add_proveedor" value="Agregar Proveedor">
                 </form>
@@ -179,10 +185,10 @@ $conn->close();
                 <span class="close" onclick="closeModal('edit')">&times;</span>
                 <h2>Editar Proveedor</h2>
                 <form method="POST" action="">
-                    <input type="text" name="edit_nombre" placeholder="Nuevo nombre del proveedor">
-                    <input type="number" name="edit_telefono" placeholder="Nuevo teléfono">
-                    <input type="email" name="edit_correo" placeholder="Nuevo correo">
-                    <input type="text" name="edit_direccion" placeholder="Nueva dirección">
+                    <input type="text" name="edit_nombre" placeholder="Nuevo nombre del proveedor" required>
+                    <input type="number" name="edit_telefono" placeholder="Nuevo teléfono" required>
+                    <input type="email" name="edit_correo" placeholder="Nuevo correo" required>
+                    <input type="text" name="edit_direccion" placeholder="Nueva dirección" required>
                     <textarea name="edit_descripcion" placeholder="Nueva descripción"></textarea>
                     <input type="submit" name="edit_proveedor" value="Guardar cambios">
                 </form>
@@ -206,10 +212,7 @@ $conn->close();
             <div class="modal-content">
                 <span class="close" onclick="closeModal('details')">&times;</span>
                 <h2>Detalles del Proveedor</h2>
-                <form method="POST" action="">
-                    <input type="text" name="details_id" placeholder="ID del proveedor" required>
-                    <input type="submit" name="view_proveedor" value="Ver detalles">
-                </form>
+                <p>Aquí se mostrarán los detalles del proveedor seleccionado.</p>
             </div>
         </div>
 
@@ -217,13 +220,12 @@ $conn->close();
     </div>
 
     <script>
-        // Funciones para mostrar y ocultar los modales
-        function openModal(modalType) {
-            document.getElementById(modalType + "Modal").style.display = "block";
+        function openModal(modalName) {
+            document.getElementById(modalName + 'Modal').style.display = "block";
         }
 
-        function closeModal(modalType) {
-            document.getElementById(modalType + "Modal").style.display = "none";
+        function closeModal(modalName) {
+            document.getElementById(modalName + 'Modal').style.display = "none";
         }
 
         // Cerrar el modal si se hace clic fuera de él
