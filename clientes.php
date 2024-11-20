@@ -54,11 +54,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_cliente'])) {
 
 // Obtener los datos del cliente seleccionado para editar
 $cliente = null;
-if (isset($_GET['editar_cliente'])) {
-    $run = $_GET['editar_cliente'];
+$cliente_no_existe = false;
+if (isset($_POST['buscar_cliente'])) {
+    $run = $_POST['run'];
     $sql = "SELECT * FROM cliente WHERE run='$run'";
     $result = $conn->query($sql);
-    $cliente = $result->fetch_assoc();
+    
+    if ($result->num_rows > 0) {
+        // Si el cliente existe, mostramos sus datos para editar
+        $cliente = $result->fetch_assoc();
+    } else {
+        // Si no existe, mostramos un mensaje de error
+        $cliente_no_existe = true;
+    }
 }
 
 // Obtener la lista de todos los clientes registrados
@@ -104,21 +112,22 @@ $conn->close();
         .btn:hover {
             background-color: #45a049; /* cambio de color al pasar el ratón */
         }
-        table {
+        input[type="text"], input[type="email"], select {
             width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        table, th, td {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
             border: 1px solid #ddd;
         }
-        th, td {
-            padding: 12px;
+        form {
+            margin-top: 20px;
             text-align: left;
+            width: 300px;
+            margin: 0 auto;
         }
-        th {
-            background-color: #4CAF50;
-            color: white;
+        .error {
+            color: red;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -154,27 +163,27 @@ $conn->close();
         <!-- Formulario para editar un cliente -->
         <div id="editClientForm" style="display:none; margin-top: 20px; text-align: left;">
             <h2>Editar Cliente</h2>
-            <form method="GET" action="">
-                <input type="text" name="editar_cliente" placeholder="Ingrese el RUN del cliente" required>
-                <input type="submit" value="Buscar Cliente">
+            <form method="POST" action="">
+                <input type="text" name="run" placeholder="Ingrese el RUN del cliente" required>
+                <input type="submit" name="buscar_cliente" value="Buscar Cliente">
             </form>
-            <?php if ($cliente): ?>
+            <?php if ($cliente_no_existe): ?>
+                <p class="error">No se encontró ningún cliente con ese RUN.</p>
+            <?php elseif ($cliente): ?>
                 <!-- Si se ha encontrado el cliente -->
                 <form method="POST" action="">
-                    <input type="text" name="run" placeholder="RUN del cliente" value="<?php echo isset($cliente) ? $cliente['run'] : ''; ?>" required readonly>
-                    <input type="text" name="nombre" placeholder="Nombre del cliente" value="<?php echo isset($cliente) ? $cliente['nombre'] : ''; ?>" required>
-                    <input type="text" name="apellido" placeholder="Apellido del cliente" value="<?php echo isset($cliente) ? $cliente['apellido'] : ''; ?>" required>
-                    <input type="text" name="celular" placeholder="Número de celular" value="<?php echo isset($cliente) ? $cliente['celular'] : ''; ?>" required>
-                    <input type="email" name="correo" placeholder="Correo electrónico" value="<?php echo isset($cliente) ? $cliente['correo'] : ''; ?>" required>
+                    <input type="text" name="run" value="<?php echo $cliente['run']; ?>" readonly>
+                    <input type="text" name="nombre" value="<?php echo $cliente['nombre']; ?>" required>
+                    <input type="text" name="apellido" value="<?php echo $cliente['apellido']; ?>" required>
+                    <input type="text" name="celular" value="<?php echo $cliente['celular']; ?>" required>
+                    <input type="email" name="correo" value="<?php echo $cliente['correo']; ?>" required>
                     <label for="fiado">¿Fiado?</label>
                     <select name="fiado" required>
-                        <option value="1" <?php echo (isset($cliente) && $cliente['fiado'] == 1) ? 'selected' : ''; ?>>Sí</option>
-                        <option value="0" <?php echo (isset($cliente) && $cliente['fiado'] == 0) ? 'selected' : ''; ?>>No</option>
+                        <option value="1" <?php echo ($cliente['fiado'] == 1) ? 'selected' : ''; ?>>Sí</option>
+                        <option value="0" <?php echo ($cliente['fiado'] == 0) ? 'selected' : ''; ?>>No</option>
                     </select>
-                    <input type="submit" name="edit_cliente" value="Editar Cliente">
+                    <input type="submit" name="edit_cliente" value="Actualizar Cliente">
                 </form>
-            <?php elseif (isset($_GET['editar_cliente'])): ?>
-                <p>No se encontró ningún cliente con ese RUN.</p>
             <?php endif; ?>
         </div>
 
