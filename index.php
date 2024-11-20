@@ -1,3 +1,18 @@
+<?php
+// Aquí podrías agregar cualquier código PHP que necesites, como por ejemplo incluir un archivo de configuración de base de datos
+
+// Ejemplo: Conexión a la base de datos
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "mi_base_de_datos";
+// $conn = new mysqli($servername, $username, $password, $dbname);
+// if ($conn->connect_error) {
+//     die("Conexión fallida: " . $conn->connect_error);
+// }
+// echo "Conectado correctamente";
+// Fin del código PHP
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -94,7 +109,7 @@
     <p>Bienvenido a Kokogest, la solución integral para la gestión de tu almacén. Con nuestro sistema, podrás gestionar de manera eficiente tu inventario. Kokogest se encarga de mantener actualizado el stock en tiempo real, lo que te permitirá tomar decisiones informadas. Ya sea que necesites registrar proveedores, clientes, nuestra plataforma te ofrece herramientas sencillas y potentes para optimizar la operación de tu negocio.</p>
     
     <div class="container">
-        <a href="proveedores.html">
+        <a href="proveedores.php"> <!-- Cambié la extensión a .php -->
             <div class="section">
                 <img src="proveedor.jpg" alt="Registro de Proveedores"> <!-- Ruta relativa para la imagen -->
                 <div>
@@ -104,7 +119,7 @@
             </div>
         </a>
 
-        <a href="clientes.html">
+        <a href="clientes.php"> <!-- Cambié la extensión a .php -->
             <div class="section">
                 <img src="cliente.jpg" alt="Registro de Clientes"> <!-- Ruta relativa para la imagen -->
                 <div>
@@ -114,7 +129,7 @@
             </div>
         </a>
 
-        <a href="roles.html">
+        <a href="roles.php"> <!-- Cambié la extensión a .php -->
             <div class="section">
                 <img src="rol.jpg" alt="Administrar Roles"> <!-- Ruta relativa para la imagen -->
                 <div>
@@ -131,6 +146,7 @@
 
 </body>
 </html>
+
 
 
 
