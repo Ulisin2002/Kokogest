@@ -13,15 +13,15 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Procesar el formulario cuando se envíe
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Procesar el formulario para agregar un nuevo proveedor
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_proveedor'])) {
     // Obtener los datos del formulario
     $nombre = $_POST['nombre'];
     $telefono = $_POST['telefono'];
     $correo = $_POST['correo'];
     $direccion = $_POST['direccion'];
     $descripcion = $_POST['descripcion'];
-    
+
     // Generar un ID único para el proveedor
     $id = uniqid(); // Usamos un ID único basado en la función uniqid()
 
@@ -68,13 +68,52 @@ $conn->close();
             border-radius: 10px;
             color: white; /* Color del texto en el contenido */
         }
-        .form-container {
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons a {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .buttons a:hover {
+            background-color: #45a049;
+        }
+        /* Estilos para el modal */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0, 0, 0, 0.5); 
+            padding-top: 50px;
+        }
+        .modal-content {
             background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            margin: auto;
+            padding: 20px;
+            margin: 15% auto;
+            border-radius: 10px;
+            width: 50%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
         input[type="text"], input[type="number"], input[type="email"], textarea, input[type="submit"] {
             width: 100%;
@@ -94,19 +133,6 @@ $conn->close();
         input[type="submit"]:hover {
             background-color: #45a049;
         }
-        .buttons a {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            margin: 5px;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .buttons a:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 <body>
@@ -115,41 +141,62 @@ $conn->close();
     <div class="content">
         <p>Esta es la página donde se gestionan los proveedores. Aquí podrás añadir, editar o eliminar proveedores según sea necesario.</p>
 
-        <!-- Formulario para agregar un proveedor -->
-        <div class="form-container">
-            <form method="POST" action="">
-                <label for="nombre">Nombre del proveedor:</label>
-                <input type="text" id="nombre" name="nombre" required>
-
-                <label for="telefono">Teléfono:</label>
-                <input type="number" id="telefono" name="telefono" required>
-
-                <label for="correo">Correo electrónico:</label>
-                <input type="email" id="correo" name="correo" required>
-
-                <label for="direccion">Dirección:</label>
-                <input type="text" id="direccion" name="direccion" required>
-
-                <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion"></textarea>
-
-                <input type="submit" value="Agregar Proveedor">
-            </form>
-        </div>
-
         <div class="buttons">
-            <a href="#">Editar proveedor</a>
-            <a href="#">Eliminar proveedor</a>
-            <a href="#">Ver detalles del proveedor</a>
+            <a href="#" onclick="openModal('add')">Agregar nuevo proveedor</a>
+            <a href="#" onclick="openModal('edit')">Editar proveedor</a>
+            <a href="#" onclick="openModal('delete')">Eliminar proveedor</a>
+            <a href="#" onclick="openModal('details')">Ver detalles del proveedor</a>
         </div>
+
+        <!-- Modal para agregar proveedor -->
+        <div id="addModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('add')">&times;</span>
+                <h2>Agregar Nuevo Proveedor</h2>
+                <form method="POST" action="">
+                    <label for="nombre">Nombre del proveedor:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+
+                    <label for="telefono">Teléfono:</label>
+                    <input type="number" id="telefono" name="telefono" required>
+
+                    <label for="correo">Correo electrónico:</label>
+                    <input type="email" id="correo" name="correo" required>
+
+                    <label for="direccion">Dirección:</label>
+                    <input type="text" id="direccion" name="direccion" required>
+
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion" name="descripcion"></textarea>
+
+                    <input type="submit" name="add_proveedor" value="Agregar Proveedor">
+                </form>
+            </div>
+        </div>
+
+        <!-- Agregar los demás modales según sea necesario -->
+        <!-- Modal de editar, eliminar y ver detalles -->
 
         <p><a href="index.php" style="color: white; text-decoration: none;">Volver a la página principal</a></p>
     </div>
 
+    <script>
+        // Funciones para mostrar y ocultar el modal
+        function openModal(modalType) {
+            document.getElementById(modalType + "Modal").style.display = "block";
+        }
+
+        function closeModal(modalType) {
+            document.getElementById(modalType + "Modal").style.display = "none";
+        }
+
+        // Cerrar el modal si se hace clic fuera de él
+        window.onclick = function(event) {
+            if (event.target.className === "modal") {
+                closeModal('add');
+            }
+        }
+    </script>
+
 </body>
 </html>
-
-
-
-
-
