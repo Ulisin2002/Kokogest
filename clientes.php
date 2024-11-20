@@ -52,6 +52,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_cliente'])) {
     }
 }
 
+// Procesar el formulario para eliminar un cliente
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_cliente'])) {
+    $run = $_POST['run'];
+
+    // Verificar si el cliente existe antes de eliminar
+    $sql_check = "SELECT * FROM cliente WHERE run='$run'";
+    $result_check = $conn->query($sql_check);
+
+    if ($result_check->num_rows > 0) {
+        // Eliminar el cliente
+        $sql_delete = "DELETE FROM cliente WHERE run='$run'";
+        if ($conn->query($sql_delete) === TRUE) {
+            echo "<p style='color:green;'>Cliente eliminado exitosamente.</p>";
+        } else {
+            echo "<p style='color:red;'>Error al eliminar el cliente: " . $conn->error . "</p>";
+        }
+    } else {
+        echo "<p style='color:red;'>No se encontró ningún cliente con ese RUN.</p>";
+    }
+}
+
 // Obtener los datos del cliente seleccionado para editar
 $cliente = null;
 $cliente_no_existe = false;
@@ -135,11 +156,12 @@ $conn->close();
 
     <h1>Registro de Clientes</h1>
     <div class="content">
-        <p>Esta página está destinada a gestionar la información de los clientes. Aquí podrás añadir, editar y ver los datos de los clientes.</p>
+        <p>Esta página está destinada a gestionar la información de los clientes. Aquí podrás añadir, editar, eliminar y ver los datos de los clientes.</p>
         
         <!-- Opciones de acción -->
         <a href="#" class="btn" onclick="document.getElementById('addClientForm').style.display='block'">Agregar cliente</a>
         <a href="#" class="btn" onclick="document.getElementById('editClientForm').style.display='block'">Editar cliente</a>
+        <a href="#" class="btn" onclick="document.getElementById('deleteClientForm').style.display='block'">Eliminar cliente</a>
         <a href="#" class="btn" onclick="document.getElementById('viewClientForm').style.display='block'">Ver datos</a>
 
         <!-- Formulario para agregar un cliente -->
@@ -170,7 +192,6 @@ $conn->close();
             <?php if ($cliente_no_existe): ?>
                 <p class="error">No se encontró ningún cliente con ese RUN.</p>
             <?php elseif ($cliente): ?>
-                <!-- Si se ha encontrado el cliente -->
                 <form method="POST" action="">
                     <input type="text" name="run" value="<?php echo $cliente['run']; ?>" readonly>
                     <input type="text" name="nombre" value="<?php echo $cliente['nombre']; ?>" required>
@@ -187,37 +208,40 @@ $conn->close();
             <?php endif; ?>
         </div>
 
-        <!-- Ver los datos de los clientes -->
-        <div id="viewClientForm" style="display:none; margin-top: 20px; text-align: left;">
-            <h2>Clientes Registrados</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>RUN</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Celular</th>
-                        <th>Correo</th>
-                        <th>Fiado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = $clientes->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $row['run']; ?></td>
-                            <td><?php echo $row['nombre']; ?></td>
-                            <td><?php echo $row['apellido']; ?></td>
-                            <td><?php echo $row['celular']; ?></td>
-                            <td><?php echo $row['correo']; ?></td>
-                            <td><?php echo $row['fiado'] ? 'Sí' : 'No'; ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
+        <!-- Formulario para eliminar un cliente -->
+        <div id="deleteClientForm" style="display:none; margin-top: 20px; text-align: left;">
+            <h2>Eliminar Cliente</h2>
+            <form method="POST" action="">
+                <input type="text" name="run" placeholder="RUN del cliente a eliminar" required>
+                <input type="submit" name="delete_cliente" value="Eliminar Cliente">
+            </form>
         </div>
 
-        <p><a href="index.php">Volver a la página principal</a></p>
+        <!-- Visualizar todos los clientes -->
+        <div id="viewClientForm" style="display:none; margin-top: 20px; text-align: left;">
+            <h2>Datos de Clientes</h2>
+            <table border="1" style="width: 100%; text-align: left;">
+                <tr>
+                    <th>RUN</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Celular</th>
+                    <th>Correo</th>
+                    <th>¿Fiado?</th>
+                </tr>
+                <?php while ($row = $clientes->fetch_assoc()): ?>
+                    <tr>
+                        <td><?php echo $row['run']; ?></td>
+                        <td><?php echo $row['nombre']; ?></td>
+                        <td><?php echo $row['apellido']; ?></td>
+                        <td><?php echo $row['celular']; ?></td>
+                        <td><?php echo $row['correo']; ?></td>
+                        <td><?php echo ($row['fiado'] == 1) ? 'Sí' : 'No'; ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            </table>
+        </div>
     </div>
-
 </body>
 </html>
+
