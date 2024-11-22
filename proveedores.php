@@ -246,14 +246,13 @@ $conn->close();
                 <span class="close" onclick="closeModal('edit')">&times;</span>
                 <h2>Editar Proveedor</h2>
                 <form method="POST" action="">
-                    <input type="text" name="edit_nombre" placeholder="Ingrese el nombre del proveedor a editar" required>
-                    <input type="number" name="edit_telefono" placeholder="Ingrese el teléfono" value="<?php echo $proveedor ? $proveedor['telefono'] : ''; ?>" required>
-                    <input type="email" name="edit_correo" placeholder="Ingrese el correo electrónico" value="<?php echo $proveedor ? $proveedor['correo'] : ''; ?>" required>
-                    <input type="text" name="edit_direccion" placeholder="Ingrese la dirección" value="<?php echo $proveedor ? $proveedor['direccion'] : ''; ?>" required>
-                    <textarea name="edit_descripcion" placeholder="Descripción del proveedor"><?php echo $proveedor ? $proveedor['descripcion'] : ''; ?></textarea>
+                    <input type="text" name="edit_nombre" placeholder="Nombre del proveedor a editar" required>
+                    <input type="text" name="edit_telefono" placeholder="Nuevo teléfono" required>
+                    <input type="email" name="edit_correo" placeholder="Nuevo correo electrónico" required>
+                    <input type="text" name="edit_direccion" placeholder="Nueva dirección" required>
+                    <textarea name="edit_descripcion" placeholder="Nueva descripción"></textarea>
                     <input type="submit" name="edit_proveedor" value="Actualizar Proveedor">
                 </form>
-                <?php if ($proveedor_no_existe) echo "<p style='color:red;'>Proveedor no encontrado.</p>"; ?>
             </div>
         </div>
 
@@ -263,56 +262,54 @@ $conn->close();
                 <span class="close" onclick="closeModal('delete')">&times;</span>
                 <h2>Eliminar Proveedor</h2>
                 <form method="POST" action="">
-                    <input type="text" name="delete_nombre" placeholder="Ingrese el nombre del proveedor a eliminar" required>
+                    <input type="text" name="delete_nombre" placeholder="Nombre del proveedor a eliminar" required>
                     <input type="submit" name="delete_proveedor" value="Eliminar Proveedor">
                 </form>
             </div>
         </div>
 
-        <!-- Modal para ver detalles -->
+        <!-- Modal para detalles del proveedor -->
         <div id="detailsModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal('details')">&times;</span>
-                <h2>Detalles de Proveedores</h2>
-                <?php if ($proveedores->num_rows > 0): ?>
-                    <table border="1" style="width: 100%; text-align: left;">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Teléfono</th>
-                            <th>Correo</th>
-                            <th>Dirección</th>
-                            <th>Descripción</th>
-                        </tr>
-                        <?php while ($row = $proveedores->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo $row['nombre']; ?></td>
-                                <td><?php echo $row['telefono']; ?></td>
-                                <td><?php echo $row['correo']; ?></td>
-                                <td><?php echo $row['direccion']; ?></td>
-                                <td><?php echo $row['descripcion']; ?></td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </table>
-                <?php else: ?>
-                    <p style="color:red;">No hay proveedores registrados.</p>
-                <?php endif; ?>
+                <h2>Detalles del Proveedor</h2>
+                <form method="POST" action="">
+                    <input type="text" name="nombre" placeholder="Nombre del proveedor para buscar" required>
+                    <input type="submit" name="buscar_proveedor" value="Buscar Proveedor">
+                </form>
+                <?php
+                if (isset($proveedor)) {
+                    echo "<p><strong>Nombre:</strong> " . $proveedor['nombre'] . "</p>";
+                    echo "<p><strong>Teléfono:</strong> " . $proveedor['telefono'] . "</p>";
+                    echo "<p><strong>Correo:</strong> " . $proveedor['correo'] . "</p>";
+                    echo "<p><strong>Dirección:</strong> " . $proveedor['direccion'] . "</p>";
+                    echo "<p><strong>Descripción:</strong> " . $proveedor['descripcion'] . "</p>";
+                } elseif ($proveedor_no_existe) {
+                    echo "<p>Proveedor no encontrado.</p>";
+                }
+                ?>
             </div>
         </div>
+
+        <!-- Enlace para volver a la página principal -->
+        <p style="text-align: center; margin-top: 20px;">
+            <a href="index.php" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Volver a la página principal</a>
+        </p>
 
     </div>
 
     <script>
-        function openModal(modalName) {
-            var modal = document.getElementById(modalName + 'Modal');
-            modal.style.display = "block";
+        // Función para abrir un modal
+        function openModal(modal) {
+            document.getElementById(modal + 'Modal').style.display = "block";
         }
-        function closeModal(modalName) {
-            var modal = document.getElementById(modalName + 'Modal');
-            modal.style.display = "none";
+
+        // Función para cerrar un modal
+        function closeModal(modal) {
+            document.getElementById(modal + 'Modal').style.display = "none";
         }
     </script>
 
 </body>
 </html>
+
